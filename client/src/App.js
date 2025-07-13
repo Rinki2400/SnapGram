@@ -9,8 +9,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomeLayout />} />
-        <Route path="/auth" element={<AuthForm />} />
+        <Route path="/dashboad" element={<HomeLayout />} />
+        <Route path="/" element={<AuthForm />} />
       </Routes>
     </Router>
   );

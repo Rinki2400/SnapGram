@@ -1,37 +1,50 @@
-import React, { useState } from 'react';
-import './AuthForm.css';
+import React, { useState } from "react";
+import { loginUser, registerUser } from "../../Api/authService";
+import { useNavigate } from "react-router-dom";
+import "./AuthForm.css";
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isLogin) {
-      console.log('Logging in with:', { email, password });
-    } else {
-      console.log('Registering with:', { username, email, password });
+    setLoading(true);
+
+    try {
+      const data = isLogin
+        ? await loginUser({ email, password })
+        : await registerUser({ username, password, email });
+
+      localStorage.setItem("token", data.token);
+      alert(`${isLogin ? "Login" : "Register"} Success`);
+      navigate("/dashboad");
+    } catch (error) {
+      alert(error.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleGoogleLogin = () => {
     console.log("Google login clicked");
-    // You can integrate Firebase / Google Identity Services here
   };
 
   const toggleForm = () => {
     setIsLogin(!isLogin);
-    setEmail('');
-    setPassword('');
-    setUsername('');
+    setEmail("");
+    setPassword("");
+    setUsername("");
   };
 
   return (
     <div className="auth-container">
       <form className="auth-form" onSubmit={handleSubmit}>
-        <h1>{isLogin ? 'Login' : 'Register'}</h1>
+        <h1>{isLogin ? "Login" : "Register"}</h1>
 
         {!isLogin && (
           <>
@@ -64,17 +77,22 @@ const AuthForm = () => {
           required
         />
 
-        <button type="submit">{isLogin ? 'Login' : 'Register'}</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Please wait..." : isLogin ? "Login" : "Register"}
+        </button>
 
         <div className="google-btn" onClick={handleGoogleLogin}>
-          <img src="https://developers.google.com/identity/images/g-logo.png" alt="google" />
+          <img
+            src="https://developers.google.com/identity/images/g-logo.png"
+            alt="google"
+          />
           Continue with Google
         </div>
 
         <p>
-          {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
+          {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
           <span onClick={toggleForm}>
-            {isLogin ? 'Register here' : 'Login here'}
+            {isLogin ? "Register here" : "Login here"}
           </span>
         </p>
       </form>
