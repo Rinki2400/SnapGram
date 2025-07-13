@@ -1,0 +1,93 @@
+/* Navbar.css */
+
+.nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1.5rem;
+  z-index: 1000;
+}
+
+/* =========== LOGO =========== */
+
+.nav-left {
+  display: flex;
+  align-items: center;
+}
+
+.logo-img {
+  height: 35px;
+  width: auto;
+  margin-right: 10px;
+}
+
+.nav-logo {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+/* =========== NAV ICONS =========== */
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin-right: 25px;
+}
+
+.nav-icon {
+  font-size: 1.25rem;
+  text-decoration: none;
+  color: #333;
+  transition: color 0.2s ease;
+}
+
+.nav-icon:hover {
+  color: #007bff;
+}
+
+/* =========== AVATAR =========== */
+
+.nav-avatar img.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.nav-avatar:hover img.avatar {
+  transform: scale(1.1);
+}
+
+/* =========== RESPONSIVE =========== */
+
+@media (max-width: 600px) {
+  .nav {
+    padding: 0 1rem;
+  }
+
+  .nav-logo {
+    font-size: 1.1rem;
+  }
+
+  .nav-right {
+    gap: 0.8rem;
+  }
+
+  .nav-icon {
+    font-size: 1rem;
+  }
+
+  .nav-avatar img.avatar {
+    width: 28px;
+    height: 28px;
+  }
+}

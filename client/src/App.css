@@ -1,0 +1,70 @@
+/* App.css */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f0f2f5;
+}
+
+.App {
+  padding-top: 70px; /* Navbar height */
+}
+
+/* Main Container */
+.app-container {
+  padding: 1rem;
+}
+
+/* Flex Layout */
+.layout {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* Sidebar */
+.sidebar {
+  flex: 1;
+  max-width: 250px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: none;
+}
+
+.feed {
+  flex: 2;
+  min-width: 0;
+}
+
+.rightbar {
+  flex: 1;
+  max-width: 250px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: none;
+}
+
+/* Show sidebars on larger screens */
+@media (min-width: 768px) {
+  .sidebar {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
+  .rightbar {
+    display: block;
+  }
+}
+
+/* Mobile tweaks */
+@media (max-width: 767px) {
+  .app-container {
+    padding: 0.5rem;
+  }
+}

@@ -1,0 +1,66 @@
+/* Rightbar.css */
+
+.rightbar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.rightbar-card {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.rightbar-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.suggested-user {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.follow-btn {
+  background-color: #ff7f50;
+  color: white;
+  border: none;
+  font-size: 0.85rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.follow-btn:hover {
+  background-color: #ff5722;
+  transform: translateY(-2px);
+}
+
+.hashtag {
+  color: #dc3545;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.hashtag:hover {
+  color: #063f8d;
+}
