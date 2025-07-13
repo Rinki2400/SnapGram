@@ -27,6 +27,7 @@
 .auth-form label {
   font-weight: 500;
   color: #333;
+  margin-bottom: -12px;
 }
 
 .auth-form input {
@@ -95,4 +96,19 @@
 
 .google-btn:hover {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+
+/* error */
+.auth-form .error {
+  color: red;
+  font-size: 0.85rem;
+margin-top: -10px;
+text-align: left;
+margin-bottom: -7px;
+}
+
+
+.error {
+  transition: all 0.2s ease-in;
 }

@@ -9,8 +9,10 @@ import {
   FaCog,
   FaSignOutAlt,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
+ 
   return (
     <div className="sidebar-menu">
       {/* User Profile Section */}

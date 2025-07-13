@@ -8,10 +8,10 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<AuthForm />} />
+        <Route path="/auth" element={<AuthForm />} />
 
         <Route
-          path="/dashboad"
+          path="/"
           element={
             <PrivateRoute>
               <HomeLayout />
