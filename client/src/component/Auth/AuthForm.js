@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { loginUser, registerUser } from "../../Api/authService";
 import { useNavigate } from "react-router-dom";
 import { validateAuthForm } from "../../utils/validateAuthForm";
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./AuthForm.css";
 
 const AuthForm = () => {
@@ -18,7 +18,12 @@ const AuthForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const validationErrors = validateAuthForm({ email, password, username, isLogin });
+    const validationErrors = validateAuthForm({
+      email,
+      password,
+      username,
+      isLogin,
+    });
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
@@ -31,6 +36,14 @@ const AuthForm = () => {
         : await registerUser({ username, email, password });
 
       localStorage.setItem("token", data.token);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          _id: data._id,
+          username: data.username,
+          email: data.email,
+        })
+      );
       toast.success(`${isLogin ? "Login" : "Register"} Successful!`);
       navigate("/");
     } catch (error) {
@@ -88,8 +101,14 @@ const AuthForm = () => {
           {loading ? "Please wait..." : isLogin ? "Login" : "Register"}
         </button>
 
-        <div className="google-btn" onClick={() => console.log("Google login clicked")}>
-          <img src="https://developers.google.com/identity/images/g-logo.png" alt="google" />
+        <div
+          className="google-btn"
+          onClick={() => console.log("Google login clicked")}
+        >
+          <img
+            src="https://developers.google.com/identity/images/g-logo.png"
+            alt="google"
+          />
           Continue with Google
         </div>
 
@@ -101,7 +120,6 @@ const AuthForm = () => {
         </p>
       </form>
 
-   
       <ToastContainer position="top-center" autoClose={3000} />
     </div>
   );

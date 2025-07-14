@@ -1,4 +1,4 @@
-import React ,{useState}from "react";
+import React, { useState } from "react";
 import "./Sidebar.css";
 import {
   FaHome,
@@ -19,10 +19,12 @@ const Sidebar = () => {
     setShowConfirm(true); // Show popup/modal
   };
 
-  const confirmLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/auth");
-  };
+ const confirmLogout = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  navigate("/auth");
+};
+
 
   const cancelLogout = () => {
     setShowConfirm(false);
@@ -49,9 +51,9 @@ const Sidebar = () => {
         </div>
       </div>
 
-      <a href="#home">
+      <div onClick={() => navigate("/")} className="sidebar-link">
         <FaHome className="icon" /> Home
-      </a>
+      </div>
       <a href="#explore">
         <FaSearch className="icon" /> Explore
       </a>
@@ -67,15 +69,23 @@ const Sidebar = () => {
       <a href="#settings">
         <FaCog className="icon" /> Settings
       </a>
-      <div  className="logout" onClick={handleLogoutClick}style={{ cursor: "pointer" }}>
+      <div
+        className="logout"
+        onClick={handleLogoutClick}
+        style={{ cursor: "pointer" }}
+      >
         <FaSignOutAlt className="icon" /> Logout
       </div>
       {showConfirm && (
         <div className="modal-backdrop">
           <div className="modal">
             <p>Are you sure you want to log out?</p>
-            <button className="confirm" onClick={confirmLogout}>Yes</button>
-            <button className="cancel" onClick={cancelLogout}>Cancel</button>
+            <button className="confirm" onClick={confirmLogout}>
+              Yes
+            </button>
+            <button className="cancel" onClick={cancelLogout}>
+              Cancel
+            </button>
           </div>
         </div>
       )}
