@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getUserById, updateUserById } from "../../Api/authService"; // ✅ make sure to create this
 import "./profile.css";
 
 const ProfilePage = () => {
@@ -10,23 +11,45 @@ const ProfilePage = () => {
   const [email, setEmail] = useState(user?.email || "");
   const [bio, setBio] = useState(user?.bio || "");
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user?._id) {
+      getUserById(user._id)
+        .then((data) => {
+          setUser(data);
+          setUsername(data.username);
+          setAvatar(data.avatar);
+          setEmail(data.email);
+          setBio(data.bio || "");
+        })
+        .catch(console.error);
+    }
+  }, [user?._id]);
 
   if (!user) return <p>No user data found. Please log in.</p>;
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    const updatedUser = {
-      ...user,
+    const updatedData = {
       username,
       avatar,
       email,
       bio,
     };
 
-    setUser(updatedUser);
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-    alert("Profile updated locally!");
+    try {
+      const updatedUser = await updateUserById(user._id, updatedData);
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      alert("Profile updated successfully!");
+    } catch (err) {
+      alert("Failed to update profile.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -35,20 +58,16 @@ const ProfilePage = () => {
         ← Back
       </button>
 
-      <h2>{user.username}'s Profile</h2>
+      <h2>{username}'s Profile</h2>
       <img
-        src={user.avatar || "https://i.pravatar.cc/150"}
+        src={avatar || "https://i.pravatar.cc/150"}
         alt="avatar"
         className="profile-avatar"
       />
 
       <div className="profile-stats">
-        <p>
-          <strong>Followers:</strong> {user.followers?.length || 0}
-        </p>
-        <p>
-          <strong>Following:</strong> {user.following?.length || 0}
-        </p>
+        <p><strong>Followers:</strong> {user.followers?.length || 0}</p>
+        <p><strong>Following:</strong> {user.following?.length || 0}</p>
       </div>
 
       <form className="edit-form" onSubmit={handleSave}>
@@ -61,6 +80,7 @@ const ProfilePage = () => {
             if (file) {
               const imageUrl = URL.createObjectURL(file);
               setAvatar(imageUrl);
+              // ✅ You can also upload to Cloudinary here and use the link
             }
           }}
         />
@@ -86,7 +106,9 @@ const ProfilePage = () => {
           placeholder="Tell something about yourself"
         />
 
-        <button type="submit">Save Changes</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Saving..." : "Save Changes"}
+        </button>
       </form>
     </div>
   );

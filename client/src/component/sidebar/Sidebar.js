@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Sidebar.css";
 import {
   FaHome,
@@ -14,9 +14,15 @@ import { useNavigate } from "react-router-dom";
 const Sidebar = () => {
   const navigate = useNavigate();
   const [showConfirm, setShowConfirm] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    setUser(storedUser);
+  }, []);
 
   const handleLogoutClick = () => {
-    setShowConfirm(true); // Show popup/modal
+    setShowConfirm(true);
   };
 
   const confirmLogout = () => {
@@ -25,36 +31,39 @@ const Sidebar = () => {
     navigate("/auth");
   };
 
-  const handleProfileClick = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (user?._id) {
-    navigate(`/profile/${user._id}`);
-  }
-};
   const cancelLogout = () => {
     setShowConfirm(false);
   };
+
+  const handleProfileClick = () => {
+    if (user?._id) {
+      navigate(`/profile/${user._id}`);
+    }
+  };
+
   return (
     <div className="sidebar-menu">
       {/* User Profile Section */}
-      <div className="profile-section">
-        <img
-          src="https://i.pravatar.cc/60"
-          alt="Profile"
-          className="profile-avatar"
-        />
-        <h3 className="profile-name">@rinki_sharma</h3>
-        <div className="profile-stats">
-          <div>
-            <strong>120</strong>
-            <span>Followers</span>
-          </div>
-          <div>
-            <strong>180</strong>
-            <span>Following</span>
+      {user && (
+        <div className="profile-section">
+          <img
+            src={user.avatar || "https://i.pravatar.cc/60"}
+            alt="Profile"
+            className="profile-avatar"
+          />
+          <h3 className="profile-name">@{user.username}</h3>
+          <div className="profile-stats">
+            <div>
+              <strong>{user.followers?.length || 0}</strong>
+              <span>Followers</span>
+            </div>
+            <div>
+              <strong>{user.following?.length || 0}</strong>
+              <span>Following</span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div onClick={() => navigate("/")} className="sidebar-link">
         <FaHome className="icon" /> Home
@@ -81,6 +90,7 @@ const Sidebar = () => {
       >
         <FaSignOutAlt className="icon" /> Logout
       </div>
+
       {showConfirm && (
         <div className="modal-backdrop">
           <div className="modal">

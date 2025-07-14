@@ -15,3 +15,16 @@ export const loginUser = async ({ email, password }) => {
   const response = await API.post('/auth/login', { email, password });
   return response.data;
 };
+
+// Get user by ID
+export const getUserById = async (id) => {
+  const response = await API.get(`/users/${id}`);
+  return response.data;
+};
+
+
+// PUT: Update user
+export const updateUserById = async (id, userData) => {
+  const response = await API.put(`/users/${id}`, userData);
+  return response.data;
+};
