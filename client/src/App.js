@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AuthForm from "./component/Auth/AuthForm";
 import HomeLayout from "./component/HomeLayout/HomeLayout";
 import PrivateRoute from "./routes/PrivateRoute";
+import Profile from "./component/Profile/Profile";
 
 function App() {
   return (
@@ -15,6 +16,14 @@ function App() {
           element={
             <PrivateRoute>
               <HomeLayout />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile/:id"
+          element={
+            <PrivateRoute>
+              <Profile/>
             </PrivateRoute>
           }
         />

@@ -19,13 +19,18 @@ const Sidebar = () => {
     setShowConfirm(true); // Show popup/modal
   };
 
- const confirmLogout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  navigate("/auth");
+  const confirmLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/auth");
+  };
+
+  const handleProfileClick = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user?._id) {
+    navigate(`/profile/${user._id}`);
+  }
 };
-
-
   const cancelLogout = () => {
     setShowConfirm(false);
   };
@@ -63,14 +68,14 @@ const Sidebar = () => {
       <a href="#bookmarks">
         <FaBookmark className="icon" /> Bookmarks
       </a>
-      <a href="#profile">
+      <div className="sidebar-link" onClick={handleProfileClick}>
         <FaUser className="icon" /> Profile
-      </a>
+      </div>
       <a href="#settings">
         <FaCog className="icon" /> Settings
       </a>
       <div
-        className="logout"
+        className="sidebar-link"
         onClick={handleLogoutClick}
         style={{ cursor: "pointer" }}
       >

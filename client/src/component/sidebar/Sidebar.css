@@ -55,7 +55,7 @@
 
 /* ===== Menu Links ===== */
 
-.sidebar-menu a ,.logout {
+.sidebar-menu a ,.sidebar-link {
   display: flex;
   align-items: center;
   font-size: 1rem;
@@ -66,14 +66,14 @@
   border-radius: 8px;
 }
 
-.sidebar-menu a:hover,.logout:hover {
+.sidebar-menu a:hover,.sidebar-link:hover {
   background-color: #f0f0f0;
   color: #ff7f50;
   transform: translateX(5px); /* Shift to the right */
 }
 
 
-.sidebar-menu a.logout {
+.sidebar-menu a.sidebar-link {
   color: #ff7f50;
 }
 
