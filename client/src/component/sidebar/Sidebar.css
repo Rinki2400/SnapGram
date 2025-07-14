@@ -55,7 +55,7 @@
 
 /* ===== Menu Links ===== */
 
-.sidebar-menu a {
+.sidebar-menu a ,.logout {
   display: flex;
   align-items: center;
   font-size: 1rem;
@@ -66,13 +66,85 @@
   border-radius: 8px;
 }
 
-.sidebar-menu a:hover {
+.sidebar-menu a:hover,.logout:hover {
   background-color: #f0f0f0;
   color: #ff7f50;
   transform: translateX(5px); /* Shift to the right */
 }
 
+
 .sidebar-menu a.logout {
   color: #ff7f50;
 }
 
+/* popup  css*/
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  padding: 24px 32px;
+  width: 90%;
+  max-width: 360px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  animation: fadeInScale 0.3s ease;
+}
+
+.modal p {
+  font-size: 16px;
+  margin-bottom: 20px;
+  color: #333;
+  font-weight: 500;
+}
+
+.modal button {
+  margin: 0 8px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.confirm {
+  background-color: #ff3b30; 
+  color: white;
+}
+
+.cancel {
+  background-color: #e0e0e0; 
+  color: #333;
+}
+
+.confirm:hover {
+  background-color: #e60023;
+}
+
+.cancel:hover {
+  background-color: #d0d0d0;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

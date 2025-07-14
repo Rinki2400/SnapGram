@@ -1,4 +1,4 @@
-import React from "react";
+import React ,{useState}from "react";
 import "./Sidebar.css";
 import {
   FaHome,
@@ -12,7 +12,21 @@ import {
 import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
- 
+  const navigate = useNavigate();
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const handleLogoutClick = () => {
+    setShowConfirm(true); // Show popup/modal
+  };
+
+  const confirmLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/auth");
+  };
+
+  const cancelLogout = () => {
+    setShowConfirm(false);
+  };
   return (
     <div className="sidebar-menu">
       {/* User Profile Section */}
@@ -53,9 +67,18 @@ const Sidebar = () => {
       <a href="#settings">
         <FaCog className="icon" /> Settings
       </a>
-      <a href="#logout" className="logout">
+      <div  className="logout" onClick={handleLogoutClick}style={{ cursor: "pointer" }}>
         <FaSignOutAlt className="icon" /> Logout
-      </a>
+      </div>
+      {showConfirm && (
+        <div className="modal-backdrop">
+          <div className="modal">
+            <p>Are you sure you want to log out?</p>
+            <button className="confirm" onClick={confirmLogout}>Yes</button>
+            <button className="cancel" onClick={cancelLogout}>Cancel</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
