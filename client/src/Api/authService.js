@@ -46,6 +46,25 @@ export const updateUserById = async (id, userData) => {
   return response.data;
 };
 
+export const getAllUsers = async () => {
+  const response = await API.get("/users/all");
+  return response.data;
+};
+
+export const followUser = async ({ currentUserId, targetUserId }) => {
+  const response = await API.post("/users/follow", { currentUserId, targetUserId });
+  return response.data;
+};
+
+export const unfollowUser = async ({ currentUserId, targetUserId }) => {
+  const response = await API.post(`/users/unfollow`, {
+    currentUserId,
+    targetUserId,
+  });
+  return response.data;
+};
+
+
 // =====================
 // 📝 Post APIs
 // =====================

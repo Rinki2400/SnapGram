@@ -10,20 +10,38 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { getUserById } from "../../Api/authService";
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const [showConfirm, setShowConfirm] = useState(false);
   const [user, setUser] = useState(null);
 
+  // Fetch user from API using ID
+  const fetchUser = async (id) => {
+    try {
+      const freshUser = await getUserById(id);
+      setUser(freshUser);
+    } catch (error) {
+      console.error("Failed to fetch user data", error);
+    }
+  };
+
+  // Initial + event-based update
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
-    setUser(storedUser);
+    if (storedUser?._id) {
+      fetchUser(storedUser._id);
+
+      // Listen for custom 'userUpdated' event
+      const handleUpdate = () => fetchUser(storedUser._id);
+      window.addEventListener("userUpdated", handleUpdate);
+
+      return () => window.removeEventListener("userUpdated", handleUpdate);
+    }
   }, []);
 
-  const handleLogoutClick = () => {
-    setShowConfirm(true);
-  };
+  const handleLogoutClick = () => setShowConfirm(true);
 
   const confirmLogout = () => {
     localStorage.removeItem("token");
@@ -31,28 +49,26 @@ const Sidebar = () => {
     navigate("/auth");
   };
 
-  const cancelLogout = () => {
-    setShowConfirm(false);
-  };
+  const cancelLogout = () => setShowConfirm(false);
 
   const handleProfileClick = () => {
-    if (user?._id) {
-      navigate(`/profile/${user._id}`);
-    }
+    if (user?._id) navigate(`/profile/${user._id}`);
   };
 
   return (
     <div className="sidebar-menu">
-      {/* User Profile Section */}
+      {/* Profile Section */}
       {user && (
         <div className="profile-section">
           <img
-            src={user?.avatar }
+            src={
+              user.avatar
+                ? `http://localhost:2000/${user.avatar}`
+                : "https://i.pravatar.cc/40"
+            }
             alt="Profile"
             className="profile-avatar"
-            
           />
-
           <h3 className="profile-name">@{user.username}</h3>
           <div className="profile-stats">
             <div>
@@ -67,16 +83,17 @@ const Sidebar = () => {
         </div>
       )}
 
+      {/* Navigation */}
       <div onClick={() => navigate("/")} className="sidebar-link">
         <FaHome className="icon" /> Home
       </div>
-      <div  className="sidebar-link">
+      <div className="sidebar-link">
         <FaSearch className="icon" /> Explore
       </div>
-      <div  className="sidebar-link">
+      <div className="sidebar-link">
         <FaCommentDots className="icon" /> Messages
       </div>
-      <div  className="sidebar-link">
+      <div className="sidebar-link">
         <FaBookmark className="icon" /> Bookmarks
       </div>
       <div className="sidebar-link" onClick={handleProfileClick}>
@@ -93,6 +110,7 @@ const Sidebar = () => {
         <FaSignOutAlt className="icon" /> Logout
       </div>
 
+      {/* Confirm Logout Modal */}
       {showConfirm && (
         <div className="modal-backdrop">
           <div className="modal">
