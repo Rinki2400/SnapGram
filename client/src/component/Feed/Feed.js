@@ -13,13 +13,20 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./Feed.css";
 import PostForm from "../PostForm/PostForm";
-import { getAllPosts, likePost ,deletePostById } from "../../Api/authService";
+import {
+  getAllPosts,
+  likePost,
+  deletePostById,
+  editPostById,
+} from "../../Api/authService";
 
 const Feed = () => {
   const [posts, setPosts] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [editingPostId, setEditingPostId] = useState(null);
+  const [editedCaption, setEditedCaption] = useState("");
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -31,6 +38,7 @@ const Feed = () => {
       setIsAuthenticated(false);
     }
   }, []);
+
   const fetchPosts = async () => {
     try {
       const data = await getAllPosts();
@@ -39,28 +47,50 @@ const Feed = () => {
       console.error("Error fetching posts:", err);
     }
   };
+
   const handleNewPost = (newPost) => {
     setPosts((prev) => [newPost, ...prev]);
   };
+
   const toggleDropdown = (postId) => {
     setOpenDropdown(openDropdown === postId ? null : postId);
   };
-  const handleAction = async (action, postId) => {
-  setOpenDropdown(null);
 
-  if (action === "delete") {
+  const handleAction = async (action, postId) => {
+    setOpenDropdown(null);
+
+    if (action === "delete") {
+      try {
+        await deletePostById(postId);
+        setPosts((prev) => prev.filter((p) => p._id !== postId));
+        toast.success("Post deleted successfully 🗑️");
+      } catch (err) {
+        toast.error("Failed to delete post ❌");
+        console.error(err);
+      }
+    } else if (action === "edit") {
+      const post = posts.find((p) => p._id === postId);
+      setEditedCaption(post.caption);
+      setEditingPostId(postId);
+    } else {
+      console.log(`Action: ${action} on post ${postId}`);
+    }
+  };
+
+  const handleSaveEdit = async (postId) => {
     try {
-      await deletePostById(postId);
-      setPosts((prev) => prev.filter((p) => p._id !== postId));
-      toast.success("Post deleted successfully 🗑️");
+      const updatedPost = await editPostById(postId, editedCaption);
+      setPosts((prev) =>
+        prev.map((p) => (p._id === updatedPost._id ? updatedPost : p))
+      );
+      toast.success("Post updated ✏️");
+      setEditingPostId(null);
+      setEditedCaption("");
     } catch (err) {
-      toast.error("Failed to delete post ❌");
+      toast.error("Failed to update post ❌");
       console.error(err);
     }
-  } else {
-    console.log(`Action: ${action} on post ${postId}`);
-  }
-};
+  };
 
   const handleLike = async (postId) => {
     try {
@@ -87,6 +117,7 @@ const Feed = () => {
       </div>
     );
   }
+
   return (
     <div className="feed-container">
       <PostForm onPostCreated={handleNewPost} />
@@ -94,7 +125,6 @@ const Feed = () => {
         const isLiked = post.likes.includes(currentUser?._id);
         return (
           <div className="post-card" key={post._id}>
-            {/* Header */}
             <div className="post-header">
               <div className="user-info">
                 <strong className="username">@{post.username}</strong>
@@ -112,9 +142,7 @@ const Feed = () => {
                     <button onClick={() => handleAction("delete", post._id)}>
                       <FaTrashAlt style={{ marginRight: "8px" }} /> Delete
                     </button>
-                    <button onClick={() => handleAction("report", post._id)}>
-                      <FaFlag style={{ marginRight: "8px" }} /> Report
-                    </button>
+                  
                   </div>
                 )}
               </div>
@@ -147,9 +175,28 @@ const Feed = () => {
               >
                 {isLiked ? "💔 Unlike" : "🤍 Like"}
               </button>
-              <p className="caption">
-                <strong>@{post.user?.username}</strong> {post.caption}
-              </p>
+              {editingPostId === post._id ? (
+                <div className="edit-caption-form">
+                  <textarea
+                    value={editedCaption}
+                    onChange={(e) => setEditedCaption(e.target.value)}
+                    className="edit-textarea"
+                  />
+                  <button onClick={() => handleSaveEdit(post._id)} className="save-btn">
+                    Save
+                  </button>
+                  <button
+                    onClick={() => setEditingPostId(null)}
+                    className="cancel-btn"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <p className="caption">
+                  <strong>@{post.user?.username}</strong> {post.caption}
+                </p>
+              )}
               <div className="post-actions">
                 <button
                   className="icon-btn"

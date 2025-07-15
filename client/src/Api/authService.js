@@ -83,3 +83,9 @@ export const deletePostById = async (postId) => {
   const res = await API.delete(`/posts/${postId}`);
   return res.data;
 };
+
+// Edit post by ID
+export const editPostById = async (postId, caption) => {
+  const response = await API.put(`/posts/${postId}`, { caption });
+  return response.data;
+};

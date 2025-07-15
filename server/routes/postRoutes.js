@@ -2,7 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-const { createPost, getAllPosts,likePost ,deletePost,getUserPosts } = require("../controller/postController");
+const { createPost,editPost ,getAllPosts,likePost ,deletePost,getUserPosts } = require("../controller/postController");
 
 const router = express.Router();
 
@@ -32,5 +32,5 @@ router.get("/", getAllPosts);
 router.get("/user/:id", getUserPosts);
 router.post("/:postId/like", likePost);
 router.delete("/:postId", deletePost);
-
+router.put("/:postId", editPost);
 module.exports = router;

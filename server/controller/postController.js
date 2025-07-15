@@ -75,3 +75,25 @@ exports.deletePost = async (req, res) => {
     res.status(500).json({ error: "Failed to delete post" });
   }
 };
+
+exports.editPost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { caption } = req.body;
+
+    const updatedPost = await Post.findByIdAndUpdate(
+      postId,
+      { caption },
+      { new: true }
+    );
+
+    if (!updatedPost) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    res.status(200).json(updatedPost);
+  } catch (error) {
+    console.error("Failed to edit post:", error);
+    res.status(500).json({ error: "Failed to edit post" });
+  }
+};
