@@ -40,3 +40,38 @@ exports.getUserPosts = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// route: POST /api/posts/:postId/like
+exports.likePost = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.postId);
+
+    if (!post) return res.status(404).json({ error: "Post not found" });
+
+    const userId = req.body.userId;
+
+    // Toggle like
+    if (post.likes.includes(userId)) {
+      post.likes.pull(userId); 
+    } else {
+      post.likes.push(userId); 
+    }
+
+    await post.save();
+    res.status(200).json(post);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update like" });
+  }
+};
+
+exports.deletePost = async (req, res) => {
+  try {
+    const post = await Post.findByIdAndDelete(req.params.postId);
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+    res.status(200).json({ message: "Post deleted successfully", postId: post._id });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete post" });
+  }
+};

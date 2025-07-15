@@ -77,3 +77,9 @@ export const likePost = async (postId, userId) => {
   const response = await API.post(`/posts/${postId}/like`, { userId });
   return response.data;
 };
+
+// Delete post by ID
+export const deletePostById = async (postId) => {
+  const res = await API.delete(`/posts/${postId}`);
+  return res.data;
+};

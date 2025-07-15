@@ -13,7 +13,7 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./Feed.css";
 import PostForm from "../PostForm/PostForm";
-import { getAllPosts, likePost } from "../../Api/authService";
+import { getAllPosts, likePost ,deletePostById } from "../../Api/authService";
 
 const Feed = () => {
   const [posts, setPosts] = useState([]);
@@ -31,7 +31,6 @@ const Feed = () => {
       setIsAuthenticated(false);
     }
   }, []);
-
   const fetchPosts = async () => {
     try {
       const data = await getAllPosts();
@@ -40,19 +39,28 @@ const Feed = () => {
       console.error("Error fetching posts:", err);
     }
   };
-
   const handleNewPost = (newPost) => {
     setPosts((prev) => [newPost, ...prev]);
   };
-
   const toggleDropdown = (postId) => {
     setOpenDropdown(openDropdown === postId ? null : postId);
   };
+  const handleAction = async (action, postId) => {
+  setOpenDropdown(null);
 
-  const handleAction = (action, postId) => {
+  if (action === "delete") {
+    try {
+      await deletePostById(postId);
+      setPosts((prev) => prev.filter((p) => p._id !== postId));
+      toast.success("Post deleted successfully 🗑️");
+    } catch (err) {
+      toast.error("Failed to delete post ❌");
+      console.error(err);
+    }
+  } else {
     console.log(`Action: ${action} on post ${postId}`);
-    setOpenDropdown(null);
-  };
+  }
+};
 
   const handleLike = async (postId) => {
     try {
@@ -74,16 +82,14 @@ const Feed = () => {
     return (
       <div className="feed-container">
         <h2 style={{ textAlign: "center", marginTop: "2rem" }}>
-          🔐 Please login to view posts.
+          Please login to view posts.
         </h2>
       </div>
     );
   }
-
   return (
     <div className="feed-container">
       <PostForm onPostCreated={handleNewPost} />
-
       {posts.map((post) => {
         const isLiked = post.likes.includes(currentUser?._id);
         return (
@@ -93,7 +99,6 @@ const Feed = () => {
               <div className="user-info">
                 <strong className="username">@{post.username}</strong>
               </div>
-
               <div className="menu-wrapper">
                 <FaEllipsisH
                   className="menu-icon"
@@ -114,8 +119,6 @@ const Feed = () => {
                 )}
               </div>
             </div>
-
-            {/* Carousel Images */}
             {post.images && post.images.length > 0 && (
               <div className="post-images">
                 <Carousel
@@ -137,8 +140,6 @@ const Feed = () => {
                 </Carousel>
               </div>
             )}
-
-            {/* Post Body */}
             <div className="post-body">
               <button
                 className={`icon-btn ${isLiked ? "liked" : ""}`}
@@ -146,7 +147,6 @@ const Feed = () => {
               >
                 {isLiked ? "💔 Unlike" : "🤍 Like"}
               </button>
-
               <p className="caption">
                 <strong>@{post.user?.username}</strong> {post.caption}
               </p>

@@ -2,7 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-const { createPost, getAllPosts, getUserPosts } = require("../controller/postController");
+const { createPost, getAllPosts,likePost ,deletePost,getUserPosts } = require("../controller/postController");
 
 const router = express.Router();
 
@@ -30,5 +30,7 @@ const upload = multer({
 router.post("/", upload.fields([{ name: "images", maxCount: 5 }]), createPost);
 router.get("/", getAllPosts);
 router.get("/user/:id", getUserPosts);
+router.post("/:postId/like", likePost);
+router.delete("/:postId", deletePost);
 
 module.exports = router;
