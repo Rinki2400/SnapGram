@@ -47,10 +47,12 @@ const Sidebar = () => {
       {user && (
         <div className="profile-section">
           <img
-            src={user.avatar || "https://i.pravatar.cc/60"}
+            src={user?.avatar }
             alt="Profile"
             className="profile-avatar"
+            
           />
+
           <h3 className="profile-name">@{user.username}</h3>
           <div className="profile-stats">
             <div>
@@ -68,21 +70,21 @@ const Sidebar = () => {
       <div onClick={() => navigate("/")} className="sidebar-link">
         <FaHome className="icon" /> Home
       </div>
-      <a href="#explore">
+      <div  className="sidebar-link">
         <FaSearch className="icon" /> Explore
-      </a>
-      <a href="#messages">
+      </div>
+      <div  className="sidebar-link">
         <FaCommentDots className="icon" /> Messages
-      </a>
-      <a href="#bookmarks">
+      </div>
+      <div  className="sidebar-link">
         <FaBookmark className="icon" /> Bookmarks
-      </a>
+      </div>
       <div className="sidebar-link" onClick={handleProfileClick}>
         <FaUser className="icon" /> Profile
       </div>
-      <a href="#settings">
+      <div className="sidebar-link">
         <FaCog className="icon" /> Settings
-      </a>
+      </div>
       <div
         className="sidebar-link"
         onClick={handleLogoutClick}

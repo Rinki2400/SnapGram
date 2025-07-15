@@ -18,7 +18,7 @@ const UserSchema = new mongoose.Schema(
     },
     avatar: {
       type: String,
-      default: "https://i.pravatar.cc/150",
+      default: "",
     },
     bio: {
       type: String,

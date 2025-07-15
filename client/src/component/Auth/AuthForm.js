@@ -42,8 +42,11 @@ const AuthForm = () => {
           _id: data._id,
           username: data.username,
           email: data.email,
+          avatar: data.avatar, 
+          bio: data.bio,
         })
       );
+
       toast.success(`${isLogin ? "Login" : "Register"} Successful!`);
       navigate("/");
     } catch (error) {
