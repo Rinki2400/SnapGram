@@ -8,7 +8,7 @@ import {
   FaFlag,
 } from "react-icons/fa";
 import "./Feed.css";
-import { getAllPosts } from "../../Api/authService"; // Make sure the path is correct
+import { getAllPosts } from "../../Api/authService";
 
 const Feed = () => {
   const [posts, setPosts] = useState([]);
@@ -17,10 +17,9 @@ const Feed = () => {
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
-
     if (user) {
       setIsAuthenticated(true);
-      fetchPosts(); // Only fetch if logged in
+      fetchPosts();
     } else {
       setIsAuthenticated(false);
     }
@@ -61,11 +60,6 @@ const Feed = () => {
           {/* Header */}
           <div className="post-header">
             <div className="user-info">
-              <img
-                src={`https://i.pravatar.cc/40?u=${post.user}`}
-                alt="avatar"
-                className="avatar"
-              />
               <strong className="username">@{post.username}</strong>
             </div>
 
@@ -109,7 +103,7 @@ const Feed = () => {
               ❤️ <strong>{post.likes.length} likes</strong>
             </p>
             <p className="caption">
-              <strong>@{post.username}</strong> {post.caption}
+              <strong>@{post.user?.username}</strong> {post.caption}
             </p>
             <div className="post-actions">
               <button className="icon-btn">

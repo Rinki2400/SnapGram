@@ -29,8 +29,8 @@ const PostForm = ({ onPostCreated }) => {
       return;
     }
 
-    if (images.length === 0) {
-      toast.error("Please select at least one image.");
+    if (images.length === 0 && caption.trim() === "") {
+      toast.error("Post must have at least an image or caption.");
       return;
     }
 
@@ -38,23 +38,27 @@ const PostForm = ({ onPostCreated }) => {
     formData.append("user", storedUser._id);
     formData.append("username", storedUser.username);
     formData.append("caption", caption);
+    formData.append("avatar", storedUser.avatar); // 👈 if you want to attach avatar
     images.forEach((file) => formData.append("images", file));
 
     try {
       setLoading(true);
-      const data = await createPost(formData);
+      const response = await createPost(formData);
+
+      // Notify parent Feed of the new post
+      if (onPostCreated && response.post) {
+        onPostCreated(response.post);
+      } else if (onPostCreated && response) {
+        onPostCreated(response);
+      }
+
       toast.success("Post created successfully!");
       setCaption("");
       setImages([]);
       fileInputRef.current.value = "";
-
-      // ✅ Update parent feed
-      if (onPostCreated) {
-        onPostCreated(data.post || data);
-      }
     } catch (err) {
-      console.error("Error:", err);
-      toast.error("Failed to create post: " + err.message);
+      console.error("Error creating post:", err);
+      toast.error("Failed to create post.");
     } finally {
       setLoading(false);
     }
@@ -63,7 +67,7 @@ const PostForm = ({ onPostCreated }) => {
   return (
     <form className="post-form" onSubmit={handleSubmit}>
       <ToastContainer position="top-right" autoClose={3000} />
-
+      
       <textarea
         placeholder="What's on your mind?"
         value={caption}
