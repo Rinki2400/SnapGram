@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getUserById, updateUserById } from "../../Api/authService"; // ✅ make sure to create this
+import { getUserById, updateUserById } from "../../Api/authService";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./profile.css";
 
 const ProfilePage = () => {
@@ -44,9 +46,13 @@ const ProfilePage = () => {
       const updatedUser = await updateUserById(user._id, updatedData);
       setUser(updatedUser);
       localStorage.setItem("user", JSON.stringify(updatedUser));
-      alert("Profile updated successfully!");
+      toast.success("Profile updated successfully!");
+
+      setTimeout(() => {
+        navigate("/");
+      }, 2000); // ⏳ Delay to let toast show
     } catch (err) {
-      alert("Failed to update profile.");
+      toast.error("Failed to update profile.");
     } finally {
       setLoading(false);
     }
@@ -80,7 +86,7 @@ const ProfilePage = () => {
             if (file) {
               const imageUrl = URL.createObjectURL(file);
               setAvatar(imageUrl);
-              // ✅ You can also upload to Cloudinary here and use the link
+              // 🔁 You can upload to server/cloud here instead
             }
           }}
         />
@@ -110,6 +116,9 @@ const ProfilePage = () => {
           {loading ? "Saving..." : "Save Changes"}
         </button>
       </form>
+
+      {/* ✅ Toast container */}
+      <ToastContainer position="top-center" autoClose={2000} />
     </div>
   );
 };

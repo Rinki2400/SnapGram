@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaEllipsisH,
   FaRegComment,
@@ -7,11 +7,33 @@ import {
   FaTrashAlt,
   FaFlag,
 } from "react-icons/fa";
-
 import "./Feed.css";
+import { getAllPosts } from "../../Api/authService"; // Make sure the path is correct
 
 const Feed = () => {
+  const [posts, setPosts] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (user) {
+      setIsAuthenticated(true);
+      fetchPosts(); // Only fetch if logged in
+    } else {
+      setIsAuthenticated(false);
+    }
+  }, []);
+
+  const fetchPosts = async () => {
+    try {
+      const data = await getAllPosts();
+      setPosts(data);
+    } catch (err) {
+      console.error("Error fetching posts:", err);
+    }
+  };
 
   const toggleDropdown = (postId) => {
     setOpenDropdown(openDropdown === postId ? null : postId);
@@ -19,57 +41,76 @@ const Feed = () => {
 
   const handleAction = (action, postId) => {
     console.log(`Action: ${action} on post ${postId}`);
-    setOpenDropdown(null); 
+    setOpenDropdown(null);
   };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="feed-container">
+        <h2 style={{ textAlign: "center", marginTop: "2rem" }}>
+          🔐 Please login to view posts.
+        </h2>
+      </div>
+    );
+  }
 
   return (
     <div className="feed-container">
-      {[1, 2, 3].map((post) => (
-        <div className="post-card" key={post}>
+      {posts.map((post) => (
+        <div className="post-card" key={post._id}>
           {/* Header */}
           <div className="post-header">
             <div className="user-info">
               <img
-                src={`https://i.pravatar.cc/40?u=${post}`}
+                src={`https://i.pravatar.cc/40?u=${post.user}`}
                 alt="avatar"
                 className="avatar"
               />
-              <strong className="username">@user{post}</strong>
+              <strong className="username">@{post.username}</strong>
             </div>
 
             <div className="menu-wrapper">
               <FaEllipsisH
                 className="menu-icon"
-                onClick={() => toggleDropdown(post)}
+                onClick={() => toggleDropdown(post._id)}
               />
-              {openDropdown === post && (
+              {openDropdown === post._id && (
                 <div className="dropdown-menu">
-                  <button onClick={() => handleAction("edit", post)}>
+                  <button onClick={() => handleAction("edit", post._id)}>
                     <FaEdit style={{ marginRight: "8px" }} /> Edit
                   </button>
-                  <button onClick={() => handleAction("delete", post)}>
+                  <button onClick={() => handleAction("delete", post._id)}>
                     <FaTrashAlt style={{ marginRight: "8px" }} /> Delete
                   </button>
-                  <button onClick={() => handleAction("report", post)}>
+                  <button onClick={() => handleAction("report", post._id)}>
                     <FaFlag style={{ marginRight: "8px" }} /> Report
                   </button>
                 </div>
               )}
             </div>
           </div>
-          <img
-            src={`https://picsum.photos/seed/${post}/600/400`}
-            alt="post"
-            className="post-image"
-          />
+
+          {/* Images */}
+          {post.images && post.images.length > 0 && (
+            <div className="post-images">
+              {post.images.map((img, i) => (
+                <img
+                  key={i}
+                  src={`http://localhost:2000/uploads/${img}`}
+                  alt={`post-${i}`}
+                  className="post-image"
+                />
+              ))}
+            </div>
+          )}
+
           <div className="post-body">
             <p className="likes">
-              ❤️ <strong>10 likes</strong>
+              ❤️ <strong>{post.likes.length} likes</strong>
             </p>
             <p className="caption">
-              <strong>@user{post}</strong> Sample caption for post {post}.
+              <strong>@{post.username}</strong> {post.caption}
             </p>
-
             <div className="post-actions">
               <button className="icon-btn">
                 <FaRegComment /> Comment

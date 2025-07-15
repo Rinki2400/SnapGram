@@ -93,6 +93,9 @@
   background-color: #ff5722;
   transform: translateY(-2px);
 }
+.remove-btn{
+  background-color: transparent;
+}
 
 /* Responsive Tweaks */
 @media (max-width: 600px) {
@@ -116,4 +119,34 @@
   .media-buttons {
     gap: 0.7rem;
   }
+}
+
+
+.image-preview-container {
+  margin-top: 1rem;
+}
+.preview-grid {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.preview-item {
+  position: relative;
+}
+.preview-img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.remove-btn {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 6px;
 }

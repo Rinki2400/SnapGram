@@ -1,46 +1,42 @@
-// controllers/postController.js
 const Post = require("../model/Post");
 
-// Create new post
+// Create post
 exports.createPost = async (req, res) => {
   try {
-    const { userId, username, caption, song, video } = req.body;
+    const { user, username, caption } = req.body;
+    const images = req.files?.images?.map((file) => file.filename) || [];
 
-    if (!userId || !username || !video) {
-      return res.status(400).json({ message: "Required fields are missing." });
-    }
-
-    const newPost = await Post.create({
-      user: userId,
+    const newPost = new Post({
+      user,
       username,
       caption,
-      song,
-      video,
+      images,
     });
 
-    res.status(201).json(newPost);
+    await newPost.save();
+    res.status(201).json({ message: "Post created", post: newPost });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
-// Get all posts (latest first)
+// Get all posts
 exports.getAllPosts = async (req, res) => {
   try {
     const posts = await Post.find().sort({ createdAt: -1 });
     res.status(200).json(posts);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
-// Get posts by user ID
+// Get user posts
 exports.getUserPosts = async (req, res) => {
   try {
-    const userId = req.params.id;
-    const posts = await Post.find({ user: userId }).sort({ createdAt: -1 });
+    const posts = await Post.find({ user: req.params.id }).sort({ createdAt: -1 });
     res.status(200).json(posts);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };

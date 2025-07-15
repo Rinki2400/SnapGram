@@ -4,7 +4,7 @@ const PostSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "users", // Collection name for User
+      ref: "users",
       required: true,
     },
     username: {
@@ -15,14 +15,12 @@ const PostSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    song: {
-      type: String,
-      default: "",
-    },
-    video: {
-      type: String,
-      required: true,
-    },
+
+    images: [
+      {
+        type: String, // Image URLs or file paths
+      },
+    ],
     likes: [
       {
         type: mongoose.Schema.Types.ObjectId,

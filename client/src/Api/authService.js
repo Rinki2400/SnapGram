@@ -28,3 +28,27 @@ export const updateUserById = async (id, userData) => {
   const response = await API.put(`/users/${id}`, userData);
   return response.data;
 };
+
+
+
+// Create a new post
+export const createPost = async (formData) => {
+  const response = await API.post('/posts', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
+// Get all posts (for feed)
+export const getAllPosts = async () => {
+  const response = await API.get('/posts');
+  return response.data;
+};
+
+// Get posts by a specific user
+export const getUserPosts = async (userId) => {
+  const response = await API.get(`/posts/user/${userId}`);
+  return response.data;
+};

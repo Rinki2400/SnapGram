@@ -31,10 +31,10 @@ const Navbar = () => {
 
       {/* Right: Icons */}
       <div className="nav-right">
-        <a href="#home" className="nav-icon"><FaHome /></a>
-        <a href="#explore" className="nav-icon"><FaSearch /></a>
-        <a href="#notifications" className="nav-icon"><FaBell /></a>
-        <a href="#chat" className="nav-icon"><FaCommentDots /></a>
+        <div  className="nav-icon"><FaHome /></div>
+        <div className="nav-icon"><FaSearch /></div>
+        <div className="nav-icon"><FaBell /></div>
+        <div className="nav-icon"><FaCommentDots /></div>
 
         <div className="nav-avatar" onClick={handleProfileClick} style={{ cursor: "pointer" }}>
           <img
