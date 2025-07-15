@@ -94,7 +94,7 @@ const PostForm = ({ onPostCreated }) => {
 
       {images.length > 0 && (
         <div className="image-preview-container">
-          <p>📷 {images.length} image(s) selected:</p>
+          <p>{images.length} image(s) selected:</p>
           <div className="preview-grid">
             {images.map((file, i) => (
               <div key={i} className="preview-item">

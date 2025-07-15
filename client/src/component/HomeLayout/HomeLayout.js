@@ -2,7 +2,7 @@ import TopNav from "../Navbar/Navbar";
 import Sidebar from "../sidebar/Sidebar";
 import Feed from "../Feed/Feed";
 import Rightbar from "../RIghtbar/Rightbar";
-import PostForm from "../PostForm/PostForm";
+
 import '../../App.css';
 
 function HomeLayout() {
@@ -15,7 +15,6 @@ function HomeLayout() {
             <Sidebar />
           </aside>
           <main className="feed">
-            <PostForm />
             <Feed />
           </main>
           <aside className="rightbar">

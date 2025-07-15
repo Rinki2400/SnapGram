@@ -117,3 +117,7 @@
 .icon-btn:hover {
   color: #ff7f50;
 }
+.liked {
+  color: red;
+  font-weight: bold;
+}

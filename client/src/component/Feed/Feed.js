@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   FaEllipsisH,
   FaRegComment,
@@ -7,18 +9,23 @@ import {
   FaTrashAlt,
   FaFlag,
 } from "react-icons/fa";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./Feed.css";
-import { getAllPosts } from "../../Api/authService";
+import PostForm from "../PostForm/PostForm";
+import { getAllPosts, likePost } from "../../Api/authService";
 
 const Feed = () => {
   const [posts, setPosts] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
       setIsAuthenticated(true);
+      setCurrentUser(user);
       fetchPosts();
     } else {
       setIsAuthenticated(false);
@@ -34,6 +41,10 @@ const Feed = () => {
     }
   };
 
+  const handleNewPost = (newPost) => {
+    setPosts((prev) => [newPost, ...prev]);
+  };
+
   const toggleDropdown = (postId) => {
     setOpenDropdown(openDropdown === postId ? null : postId);
   };
@@ -41,6 +52,22 @@ const Feed = () => {
   const handleAction = (action, postId) => {
     console.log(`Action: ${action} on post ${postId}`);
     setOpenDropdown(null);
+  };
+
+  const handleLike = async (postId) => {
+    try {
+      const updatedPost = await likePost(postId, currentUser._id);
+      const isNowLiked = updatedPost.likes.includes(currentUser._id);
+
+      setPosts((prevPosts) =>
+        prevPosts.map((p) => (p._id === updatedPost._id ? updatedPost : p))
+      );
+
+      toast.success(isNowLiked ? "Liked the post ❤️" : "Unliked the post 💔");
+    } catch (error) {
+      console.error("Failed to like/unlike post:", error);
+      toast.error("Action failed. Please try again.");
+    }
   };
 
   if (!isAuthenticated) {
@@ -55,67 +82,92 @@ const Feed = () => {
 
   return (
     <div className="feed-container">
-      {posts.map((post) => (
-        <div className="post-card" key={post._id}>
-          {/* Header */}
-          <div className="post-header">
-            <div className="user-info">
-              <strong className="username">@{post.username}</strong>
-            </div>
+      <PostForm onPostCreated={handleNewPost} />
 
-            <div className="menu-wrapper">
-              <FaEllipsisH
-                className="menu-icon"
-                onClick={() => toggleDropdown(post._id)}
-              />
-              {openDropdown === post._id && (
-                <div className="dropdown-menu">
-                  <button onClick={() => handleAction("edit", post._id)}>
-                    <FaEdit style={{ marginRight: "8px" }} /> Edit
-                  </button>
-                  <button onClick={() => handleAction("delete", post._id)}>
-                    <FaTrashAlt style={{ marginRight: "8px" }} /> Delete
-                  </button>
-                  <button onClick={() => handleAction("report", post._id)}>
-                    <FaFlag style={{ marginRight: "8px" }} /> Report
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
+      {posts.map((post) => {
+        const isLiked = post.likes.includes(currentUser?._id);
+        return (
+          <div className="post-card" key={post._id}>
+            {/* Header */}
+            <div className="post-header">
+              <div className="user-info">
+                <strong className="username">@{post.username}</strong>
+              </div>
 
-          {/* Images */}
-          {post.images && post.images.length > 0 && (
-            <div className="post-images">
-              {post.images.map((img, i) => (
-                <img
-                  key={i}
-                  src={`http://localhost:2000/uploads/${img}`}
-                  alt={`post-${i}`}
-                  className="post-image"
+              <div className="menu-wrapper">
+                <FaEllipsisH
+                  className="menu-icon"
+                  onClick={() => toggleDropdown(post._id)}
                 />
-              ))}
+                {openDropdown === post._id && (
+                  <div className="dropdown-menu">
+                    <button onClick={() => handleAction("edit", post._id)}>
+                      <FaEdit style={{ marginRight: "8px" }} /> Edit
+                    </button>
+                    <button onClick={() => handleAction("delete", post._id)}>
+                      <FaTrashAlt style={{ marginRight: "8px" }} /> Delete
+                    </button>
+                    <button onClick={() => handleAction("report", post._id)}>
+                      <FaFlag style={{ marginRight: "8px" }} /> Report
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
-          )}
 
-          <div className="post-body">
-            <p className="likes">
-              ❤️ <strong>{post.likes.length} likes</strong>
-            </p>
-            <p className="caption">
-              <strong>@{post.user?.username}</strong> {post.caption}
-            </p>
-            <div className="post-actions">
-              <button className="icon-btn">
-                <FaRegComment /> Comment
+            {/* Carousel Images */}
+            {post.images && post.images.length > 0 && (
+              <div className="post-images">
+                <Carousel
+                  showThumbs={false}
+                  showStatus={false}
+                  useKeyboardArrows
+                  infiniteLoop
+                  dynamicHeight={false}
+                >
+                  {post.images.map((img, i) => (
+                    <div key={i}>
+                      <img
+                        src={`http://localhost:2000/uploads/${img}`}
+                        alt={`post-${i}`}
+                        className="post-image"
+                      />
+                    </div>
+                  ))}
+                </Carousel>
+              </div>
+            )}
+
+            {/* Post Body */}
+            <div className="post-body">
+              <button
+                className={`icon-btn ${isLiked ? "liked" : ""}`}
+                onClick={() => handleLike(post._id)}
+              >
+                {isLiked ? "💔 Unlike" : "🤍 Like"}
               </button>
-              <button className="icon-btn">
-                <FaRegBookmark /> Save
-              </button>
+
+              <p className="caption">
+                <strong>@{post.user?.username}</strong> {post.caption}
+              </p>
+              <div className="post-actions">
+                <button
+                  className="icon-btn"
+                  onClick={() => handleLike(post._id)}
+                >
+                  {isLiked ? "💔 Unlike" : "❤️ Like"}
+                </button>
+                <button className="icon-btn">
+                  <FaRegComment /> Comment
+                </button>
+                <button className="icon-btn">
+                  <FaRegBookmark /> Save
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
