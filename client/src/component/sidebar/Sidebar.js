@@ -61,14 +61,12 @@ const Sidebar = () => {
       {user && (
         <div className="profile-section">
           <img
-            src={
-              user.avatar
-                ? `http://localhost:2000/${user.avatar}`
-                : "https://i.pravatar.cc/40"
-            }
+            src={user.avatar || "https://i.pravatar.cc/40"}
             alt="Profile"
             className="profile-avatar"
           />
+          
+
           <h3 className="profile-name">@{user.username}</h3>
           <div className="profile-stats">
             <div>

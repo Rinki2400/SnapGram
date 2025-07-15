@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "./Rightbar.css";
-import { getAllUsers, followUser, unfollowUser, getUserById } from "../../Api/authService";
-
+import {
+  getAllUsers,
+  followUser,
+  unfollowUser,
+  getUserById,
+} from "../../Api/authService";
 
 const Rightbar = () => {
   const [users, setUsers] = useState([]);
@@ -35,45 +39,45 @@ const Rightbar = () => {
     fetchFollowing();
   }, [currentUser?._id]);
 
-// Rightbar.js
+  // Rightbar.js
 
-const handleFollow = async (targetId) => {
-  try {
-    const isAlreadyFollowing = followingIds.includes(targetId);
+  const handleFollow = async (targetId) => {
+    try {
+      const isAlreadyFollowing = followingIds.includes(targetId);
 
-    if (isAlreadyFollowing) {
-      await unfollowUser({
-        currentUserId: currentUser._id,
-        targetUserId: targetId,
-      });
-      setFollowingIds((prev) => prev.filter((id) => id !== targetId));
+      if (isAlreadyFollowing) {
+        await unfollowUser({
+          currentUserId: currentUser._id,
+          targetUserId: targetId,
+        });
+        setFollowingIds((prev) => prev.filter((id) => id !== targetId));
 
-      const updatedUser = {
-        ...currentUser,
-        following: (currentUser.following || []).filter((id) => id !== targetId),
-      };
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      window.dispatchEvent(new Event("userUpdated")); // 👈 fire event
+        const updatedUser = {
+          ...currentUser,
+          following: (currentUser.following || []).filter(
+            (id) => id !== targetId
+          ),
+        };
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        window.dispatchEvent(new Event("userUpdated")); // 👈 fire event
+      } else {
+        await followUser({
+          currentUserId: currentUser._id,
+          targetUserId: targetId,
+        });
+        setFollowingIds((prev) => [...prev, targetId]);
 
-    } else {
-      await followUser({
-        currentUserId: currentUser._id,
-        targetUserId: targetId,
-      });
-      setFollowingIds((prev) => [...prev, targetId]);
-
-      const updatedUser = {
-        ...currentUser,
-        following: [...(currentUser.following || []), targetId],
-      };
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      window.dispatchEvent(new Event("userUpdated")); // 👈 fire event
+        const updatedUser = {
+          ...currentUser,
+          following: [...(currentUser.following || []), targetId],
+        };
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        window.dispatchEvent(new Event("userUpdated")); // 👈 fire event
+      }
+    } catch (err) {
+      console.error("Follow/Unfollow error:", err);
     }
-  } catch (err) {
-    console.error("Follow/Unfollow error:", err);
-  }
-};
-
+  };
 
   return (
     <div className="rightbar-container">
@@ -85,6 +89,7 @@ const handleFollow = async (targetId) => {
             return (
               <div className="suggested-user" key={user._id}>
                 <div className="user-info">
+                
                   <span>@{user.username}</span>
                 </div>
                 <button
