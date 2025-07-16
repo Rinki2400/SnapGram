@@ -20,8 +20,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/posts", require("./routes/postRoutes")); // <-- this is using multer now
-
+app.use("/api/messages", require("./routes/messageRoutes"));
 // Default route
-app.get("/", (req, res) => res.send("SnapGram API is running"));
+
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

@@ -138,8 +138,6 @@ exports.savePost = async (req, res) => {
   }
 };
 
-
-
 // GET /api/users/:userId/saved
 exports.getSavedPosts = async (req, res) => {
   const { userId } = req.params;
@@ -150,6 +148,30 @@ exports.getSavedPosts = async (req, res) => {
 
     res.json(user.savedPosts);
   } catch (error) {
+    console.error("❌ Error in getSavedPosts:", error);
     res.status(500).json({ error: "Failed to fetch saved posts" });
+  }
+};
+exports.postdelete = async (req, res) => {
+  const { userId, postId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    const initialLength = user.savedPosts.length;
+    user.savedPosts = user.savedPosts.filter((id) => id.toString() !== postId);
+
+    if (user.savedPosts.length === initialLength) {
+      return res.status(404).json({ error: "Post not found in saved list." });
+    }
+
+    await user.save();
+    res.status(200).json({ message: "Post removed from bookmarks." });
+  } catch (err) {
+    console.error("❌ Error in postdelete:", err);
+    res.status(500).json({ error: "Failed to remove post." });
   }
 };

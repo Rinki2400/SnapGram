@@ -26,12 +26,13 @@ const UserSchema = new mongoose.Schema(
     },
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
+    savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: "posts" }],
+    messages: [{ type: mongoose.Schema.Types.ObjectId, ref: "Message" }],
 
     posts: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Post",
+        ref: "Posts",
       },
     ],
   },
