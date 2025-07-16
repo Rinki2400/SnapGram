@@ -65,7 +65,6 @@ const Sidebar = () => {
             alt="Profile"
             className="profile-avatar"
           />
-          
 
           <h3 className="profile-name">@{user.username}</h3>
           <div className="profile-stats">
@@ -91,9 +90,10 @@ const Sidebar = () => {
       <div className="sidebar-link">
         <FaCommentDots className="icon" /> Messages
       </div>
-      <div className="sidebar-link">
+      <div className="sidebar-link" onClick={() => navigate("/bookmarks")}>
         <FaBookmark className="icon" /> Bookmarks
       </div>
+
       <div className="sidebar-link" onClick={handleProfileClick}>
         <FaUser className="icon" /> Profile
       </div>

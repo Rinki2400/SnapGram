@@ -1,5 +1,6 @@
 const User = require("../model/User");
 
+const Post = require("../model/Post");
 // Update user profile
 exports.updateProfile = async (req, res) => {
   try {
@@ -12,7 +13,8 @@ exports.updateProfile = async (req, res) => {
       { new: true }
     );
 
-    if (!updatedUser) return res.status(404).json({ message: "User not found" });
+    if (!updatedUser)
+      return res.status(404).json({ message: "User not found" });
 
     res.status(200).json(updatedUser);
   } catch (error) {
@@ -37,16 +39,13 @@ exports.getProfileById = async (req, res) => {
 // controller/userController.js
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find()
-      .select("-password")       
-      .sort({ _id: -1 })                          
+    const users = await User.find().select("-password").sort({ _id: -1 });
     res.json(users);
   } catch (err) {
     console.error("Error fetching users:", err);
     res.status(500).json({ error: "Server error" });
   }
 };
-
 
 // controllers/userController.js
 exports.followUser = async (req, res) => {
@@ -102,5 +101,55 @@ exports.unfollowUser = async (req, res) => {
     res.status(200).json({ message: "Unfollowed successfully" });
   } catch (err) {
     res.status(500).json({ error: "Failed to unfollow" });
+  }
+};
+
+// POST /api/users/:userId/save/:postId
+exports.savePost = async (req, res) => {
+  const { userId, postId } = req.params;
+
+  try {
+    console.log("User ID:", userId);
+    console.log("Post ID:", postId);
+
+    const user = await User.findById(userId);
+    if (!user) {
+      console.error("User not found");
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const isSaved = user.savedPosts.includes(postId);
+    console.log("Is Post already saved:", isSaved);
+
+    if (isSaved) {
+      user.savedPosts.pull(postId);
+    } else {
+      user.savedPosts.push(postId);
+    }
+
+    await user.save();
+    res.status(200).json({
+      message: isSaved ? "Post unsaved" : "Post saved",
+      savedPosts: user.savedPosts,
+    });
+  } catch (err) {
+    console.error("🔥 Error in savePost:", err); // add full error log
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+
+
+// GET /api/users/:userId/saved
+exports.getSavedPosts = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId).populate("savedPosts");
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    res.json(user.savedPosts);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch saved posts" });
   }
 };

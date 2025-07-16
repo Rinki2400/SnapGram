@@ -17,6 +17,8 @@ import {
   likePost,
   deletePostById,
   editPostById,
+  toggleSavePost,
+  getSavedPosts,
 } from "../../Api/authService";
 
 const Feed = () => {
@@ -26,6 +28,7 @@ const Feed = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [editingPostId, setEditingPostId] = useState(null);
   const [editedCaption, setEditedCaption] = useState("");
+  const [savedPosts, setSavedPosts] = useState([]);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -33,6 +36,7 @@ const Feed = () => {
       setIsAuthenticated(true);
       setCurrentUser(user);
       fetchPosts();
+      fetchSavedPosts(user._id);
     } else {
       setIsAuthenticated(false);
     }
@@ -44,6 +48,26 @@ const Feed = () => {
       setPosts(data);
     } catch (err) {
       console.error("Error fetching posts:", err);
+    }
+  };
+
+  const fetchSavedPosts = async (userId) => {
+    try {
+      const saved = await getSavedPosts(userId);
+      setSavedPosts(saved.map((p) => p._id)); // store saved post IDs
+    } catch (err) {
+      console.error("Error fetching saved posts:", err);
+    }
+  };
+
+  const handleSavePost = async (postId) => {
+    try {
+      const res = await toggleSavePost(currentUser._id, postId);
+      toast.success(res.message || "Post saved");
+      fetchSavedPosts(currentUser._id); // Refresh saved post list
+    } catch (err) {
+      toast.error("Failed to save post ❌");
+      console.error(err);
     }
   };
 
@@ -71,8 +95,6 @@ const Feed = () => {
       const post = posts.find((p) => p._id === postId);
       setEditedCaption(post.caption);
       setEditingPostId(postId);
-    } else {
-      console.log(`Action: ${action} on post ${postId}`);
     }
   };
 
@@ -122,6 +144,7 @@ const Feed = () => {
       <PostForm onPostCreated={handleNewPost} />
       {posts.map((post) => {
         const isLiked = post.likes.includes(currentUser?._id);
+        const isSaved = savedPosts.includes(post._id);
         return (
           <div className="post-card" key={post._id}>
             <div className="post-header">
@@ -141,7 +164,6 @@ const Feed = () => {
                     <button onClick={() => handleAction("delete", post._id)}>
                       <FaTrashAlt style={{ marginRight: "8px" }} /> Delete
                     </button>
-                  
                   </div>
                 )}
               </div>
@@ -181,7 +203,10 @@ const Feed = () => {
                     onChange={(e) => setEditedCaption(e.target.value)}
                     className="edit-textarea"
                   />
-                  <button onClick={() => handleSaveEdit(post._id)} className="save-btn">
+                  <button
+                    onClick={() => handleSaveEdit(post._id)}
+                    className="save-btn"
+                  >
                     Save
                   </button>
                   <button
@@ -206,8 +231,11 @@ const Feed = () => {
                 <button className="icon-btn">
                   <FaRegComment /> Comment
                 </button>
-                <button className="icon-btn">
-                  <FaRegBookmark /> Save
+                <button
+                  className="icon-btn"
+                  onClick={() => handleSavePost(post._id)}
+                >
+                  <FaRegBookmark /> {isSaved ? "Saved" : "Save"}
                 </button>
               </div>
             </div>

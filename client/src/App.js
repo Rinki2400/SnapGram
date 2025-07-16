@@ -4,6 +4,7 @@ import AuthForm from "./component/Auth/AuthForm";
 import HomeLayout from "./component/HomeLayout/HomeLayout";
 import PrivateRoute from "./routes/PrivateRoute";
 import Profile from "./component/Profile/Profile";
+import SavedPosts from "./component/SavePost/SavedPosts";
 
 function App() {
   return (
@@ -23,7 +24,15 @@ function App() {
           path="/profile/:id"
           element={
             <PrivateRoute>
-              <Profile/>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/bookmarks"
+          element={
+            <PrivateRoute>
+              <SavedPosts />
             </PrivateRoute>
           }
         />

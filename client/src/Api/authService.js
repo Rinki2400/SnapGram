@@ -108,3 +108,13 @@ export const editPostById = async (postId, caption) => {
   const response = await API.put(`/posts/${postId}`, { caption });
   return response.data;
 };
+
+
+export const toggleSavePost = async (userId, postId) => {
+  const response = await API.post(`/users/${userId}/save/${postId}`);
+  return response.data;
+};
+export const getSavedPosts = async (userId) => {
+  const response = await API.get(`/users/${userId}/saved`);
+  return response.data;
+};
