@@ -1,0 +1,48 @@
+.saved-posts-container {
+  padding: 2rem;
+  text-align: center;
+}
+
+.table-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.saved-posts-table {
+  width: 90%;
+  max-width: 800px;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+}
+
+.saved-posts-table th,
+.saved-posts-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: center;
+}
+
+.saved-posts-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.remove-btn {
+  padding: 6px 12px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+  display: inline-block; /* ⬅️ Prevent it from floating */
+  position: relative;    /* ⬅️ Ensure it's inside the td */
+}
+
+
+.remove-btn:hover {
+  background-color: #c0392b;
+}

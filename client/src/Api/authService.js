@@ -118,3 +118,7 @@ export const getSavedPosts = async (userId) => {
   const response = await API.get(`/users/${userId}/saved`);
   return response.data;
 };
+
+export const removeSavedPost = async (userId, postId) => {
+  return await API.delete(`/users/${userId}/saved/${postId}`);
+};
