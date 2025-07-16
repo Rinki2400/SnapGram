@@ -5,6 +5,8 @@ import HomeLayout from "./component/HomeLayout/HomeLayout";
 import PrivateRoute from "./routes/PrivateRoute";
 import Profile from "./component/Profile/Profile";
 import SavedPosts from "./component/SavePost/SavedPosts";
+import Messages from "./component/message/Messages";
+
 
 function App() {
   return (
@@ -33,6 +35,14 @@ function App() {
           element={
             <PrivateRoute>
               <SavedPosts />
+            </PrivateRoute>
+          }
+        />
+          <Route
+          path="/message"
+          element={
+            <PrivateRoute>
+              <Messages />
             </PrivateRoute>
           }
         />

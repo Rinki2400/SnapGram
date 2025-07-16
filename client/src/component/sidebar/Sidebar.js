@@ -6,7 +6,6 @@ import {
   FaCommentDots,
   FaBookmark,
   FaUser,
-  FaCog,
   FaSignOutAlt,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -87,9 +86,10 @@ const Sidebar = () => {
       <div className="sidebar-link">
         <FaSearch className="icon" /> Explore
       </div>
-      <div className="sidebar-link">
+      <div className="sidebar-link" onClick={() => navigate("/message")}>
         <FaCommentDots className="icon" /> Messages
       </div>
+
       <div className="sidebar-link" onClick={() => navigate("/bookmarks")}>
         <FaBookmark className="icon" /> Bookmarks
       </div>
@@ -97,9 +97,7 @@ const Sidebar = () => {
       <div className="sidebar-link" onClick={handleProfileClick}>
         <FaUser className="icon" /> Profile
       </div>
-      <div className="sidebar-link">
-        <FaCog className="icon" /> Settings
-      </div>
+
       <div
         className="sidebar-link"
         onClick={handleLogoutClick}
