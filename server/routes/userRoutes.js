@@ -8,7 +8,8 @@ const {
   unfollowUser,
   savePost,
   getSavedPosts,
-  postdelete
+  postdelete,
+  getAllUsersExceptCurrent
 } = require("../controller/userController");
 
 // Update profile by ID
@@ -25,5 +26,7 @@ router.post("/:userId/save/:postId", savePost);
 // Get all saved posts for a user
 router.get("/:userId/saved", getSavedPosts);
 router.delete("/:userId/saved/:postId", postdelete);
+
+router.get("/", getAllUsersExceptCurrent);
 
 module.exports = router;
