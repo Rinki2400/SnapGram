@@ -6,11 +6,13 @@ import {
   FaBookmark,
   FaUser,
   FaSignOutAlt,
+  FaMoon,
+  FaSun,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { getUserById } from "../../Api/authService";
 
-const Sidebar = () => {
+const Sidebar = ({ theme, setTheme }) => {
   const navigate = useNavigate();
   const [showConfirm, setShowConfirm] = useState(false);
   const [user, setUser] = useState(null);
@@ -31,7 +33,6 @@ const Sidebar = () => {
     if (storedUser?._id) {
       fetchUser(storedUser._id);
 
-      // Listen for custom 'userUpdated' event
       const handleUpdate = () => fetchUser(storedUser._id);
       window.addEventListener("userUpdated", handleUpdate);
 
@@ -40,17 +41,18 @@ const Sidebar = () => {
   }, []);
 
   const handleLogoutClick = () => setShowConfirm(true);
-
   const confirmLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     navigate("/auth");
   };
-
   const cancelLogout = () => setShowConfirm(false);
-
   const handleProfileClick = () => {
     if (user?._id) navigate(`/profile/${user._id}`);
+  };
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
   };
 
   return (
@@ -63,7 +65,6 @@ const Sidebar = () => {
             alt="Profile"
             className="profile-avatar"
           />
-
           <h3 className="profile-name">@{user.username}</h3>
           <div className="profile-stats">
             <div>
@@ -78,23 +79,34 @@ const Sidebar = () => {
         </div>
       )}
 
-      {/* Navigation */}
+      {/* Navigation Links */}
       <div onClick={() => navigate("/")} className="sidebar-link">
         <FaHome className="icon" /> Home
       </div>
-
       <div className="sidebar-link" onClick={() => navigate("/message")}>
         <FaCommentDots className="icon" /> Messages
       </div>
-
       <div className="sidebar-link" onClick={() => navigate("/bookmarks")}>
         <FaBookmark className="icon" /> Bookmarks
       </div>
-
       <div className="sidebar-link" onClick={handleProfileClick}>
         <FaUser className="icon" /> Profile
       </div>
 
+      {/* Theme Toggle */}
+      <div className="sidebar-link" onClick={toggleTheme}>
+        {theme === "dark" ? (
+          <>
+            <FaSun className="icon" /> Light Mode
+          </>
+        ) : (
+          <>
+            <FaMoon className="icon" /> Dark Mode
+          </>
+        )}
+      </div>
+
+      {/* Logout */}
       <div
         className="sidebar-link"
         onClick={handleLogoutClick}
