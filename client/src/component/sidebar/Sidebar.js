@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "./Sidebar.css";
 import {
   FaHome,
-  FaSearch,
   FaCommentDots,
   FaBookmark,
   FaUser,
@@ -83,9 +82,7 @@ const Sidebar = () => {
       <div onClick={() => navigate("/")} className="sidebar-link">
         <FaHome className="icon" /> Home
       </div>
-      <div className="sidebar-link">
-        <FaSearch className="icon" /> Explore
-      </div>
+
       <div className="sidebar-link" onClick={() => navigate("/message")}>
         <FaCommentDots className="icon" /> Messages
       </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
@@ -13,26 +13,28 @@ const MessagePage = () => {
   const [users, setUsers] = useState([]);
   const user = JSON.parse(localStorage.getItem("user"));
   const messageEndRef = useRef(null);
- const navigate = useNavigate();
+  const navigate = useNavigate();
+
   // Scroll to bottom on new messages
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Fetch all users
+  // Fetch all users (excluding self)
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const res = await axios.get("http://localhost:2000/api/users");
-        setUsers(res.data.filter((u) => u._id !== user._id)); // exclude self
+        setUsers(res.data.filter((u) => u._id !== user._id));
       } catch (error) {
         console.error("Error fetching users:", error);
       }
     };
     fetchUsers();
-  }, []);
+  }, [user._id]);
 
-  const fetchMessages = async () => {
+  // ✅ Wrap fetchMessages in useCallback to avoid ESLint warning
+  const fetchMessages = useCallback(async () => {
     try {
       const res = await axios.get(
         `http://localhost:2000/api/messages/${user._id}/${receiverId}`
@@ -41,7 +43,27 @@ const MessagePage = () => {
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
-  };
+  }, [user._id, receiverId]);
+
+  // Load messages and handle socket messages
+  useEffect(() => {
+    if (receiverId) fetchMessages();
+
+    const handler = (msg) => {
+      if (
+        (msg.sender === user._id && msg.receiver === receiverId) ||
+        (msg.sender === receiverId && msg.receiver === user._id)
+      ) {
+        setMessages((prev) => [...prev, msg]);
+      }
+    };
+
+    socket.on("receiveMessage", handler);
+
+    return () => {
+      socket.off("receiveMessage", handler);
+    };
+  }, [receiverId, user._id, fetchMessages]);
 
   const sendMessage = async (e) => {
     e.preventDefault();
@@ -63,29 +85,13 @@ const MessagePage = () => {
     }
   };
 
-  useEffect(() => {
-    if (receiverId) fetchMessages();
-
-    socket.on("receiveMessage", (msg) => {
-      if (
-        (msg.sender === user._id && msg.receiver === receiverId) ||
-        (msg.sender === receiverId && msg.receiver === user._id)
-      ) {
-        setMessages((prev) => [...prev, msg]);
-      }
-    });
-
-    return () => {
-      socket.off("receiveMessage");
-    };
-  }, [receiverId]);
-
   return (
     <div className="chat-layout">
-        <button className="back-btn" onClick={() => navigate(-1)}>
+      <button className="back-btn" onClick={() => navigate(-1)}>
         ← Back
       </button>
-   
+
+      {/* Left Sidebar: User List */}
       <div className="user-list">
         <h3>Users</h3>
         {users.map((u) => (
@@ -99,7 +105,7 @@ const MessagePage = () => {
         ))}
       </div>
 
-      {/* Right - Chat Window */}
+      {/* Right: Chat Area */}
       <div className="chat-container">
         <h2>💬 Chat Room</h2>
 
@@ -135,7 +141,6 @@ const MessagePage = () => {
           <p className="select-user-note">Select a user to start chatting</p>
         )}
       </div>
-      
     </div>
   );
 };

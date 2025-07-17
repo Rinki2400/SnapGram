@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import './Navbar.css';
-import logo from '../assets/logo.svg';
-import { FaHome, FaSearch, FaBell, FaCommentDots } from 'react-icons/fa';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import "./Navbar.css";
+import logo from "../assets/logo.svg";
+import { FaHome, FaCommentDots } from "react-icons/fa";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
@@ -20,6 +20,13 @@ const Navbar = () => {
       navigate(`/profile/${user._id}`);
     }
   };
+ 
+
+  const handleMessage = () => {
+    if (user?._id) {
+      navigate("/message");
+    }
+  };
 
   return (
     <nav className="nav">
@@ -31,12 +38,24 @@ const Navbar = () => {
 
       {/* Right: Icons */}
       <div className="nav-right">
-        <div  className="nav-icon"><FaHome /></div>
-        <div className="nav-icon"><FaSearch /></div>
-        <div className="nav-icon"><FaBell /></div>
-        <div className="nav-icon"><FaCommentDots /></div>
+        <div className="nav-icon">
+          <FaHome />
+        </div>
+      
 
-        <div className="nav-avatar" onClick={handleProfileClick} style={{ cursor: "pointer" }}>
+        <div
+          className="nav-icon"
+          onClick={handleMessage}
+          style={{ cursor: "pointer" }}
+        >
+          <FaCommentDots />
+        </div>
+
+        <div
+          className="nav-avatar"
+          onClick={handleProfileClick}
+          style={{ cursor: "pointer" }}
+        >
           <img
             src={user?.avatar}
             alt="avatar"

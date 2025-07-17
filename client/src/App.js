@@ -8,6 +8,7 @@ import SavedPosts from "./component/SavePost/SavedPosts";
 import Messages from "./component/message/Messages";
 
 
+
 function App() {
   return (
     <Router>
@@ -46,6 +47,7 @@ function App() {
             </PrivateRoute>
           }
         />
+       
       </Routes>
     </Router>
   );

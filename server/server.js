@@ -26,7 +26,7 @@ const io = new Server(server, {
 
 // Handle Socket.IO connections
 io.on("connection", (socket) => {
-  console.log("🟢 Socket connected:", socket.id);
+  // console.log("🟢 Socket connected:", socket.id);
 
   // Listen for messages
   socket.on("sendMessage", (data) => {
@@ -35,7 +35,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log("🔴 Socket disconnected:", socket.id);
+    // console.log("🔴 Socket disconnected:", socket.id);
   });
 });
 
@@ -51,6 +51,7 @@ app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/posts", require("./routes/postRoutes")); // with multer
 app.use("/api/messages", require("./routes/messageRoutes")); // optional for chat history
+
 
 // Start server with Socket.IO
 server.listen(PORT, () =>
